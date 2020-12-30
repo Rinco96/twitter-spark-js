@@ -67,7 +67,7 @@ Dans un premier temps, nous avons produit un code permettant de créer un « s
 
 ### Présentation du code JAVA
 
-La première étape est s'authentifier auprès de l'API Twitter par le biais de la librairie Twitter4J. Une fois cela réalisé, nous 
+La première étape est s'authentifier auprès de l'API Twitter par le biais de la librairie Twitter4J. Une fois cela réalisé, nous pouvons accéder au stream de tweets et les traiter. Les étapes a réaliser pour obtenir le top 10 des hashtags les plus citées sont les suivantes :
 
 1. Filtre pour récupérer uniquement les tweets en anglais
 2. Récupérer les hashtags
