@@ -37,10 +37,13 @@ Les premières parties de l’implémentation ont été un succès, nous avons r
 2) Créer un contexte Spark
 3) Récupérer un stream de tweets via l’API Twitter
 4) Utiliser des fonctions de transformations sur les RDD.
+
 Cependant la dernière étape a posé problème à cause d’un concept qui n’est pas intrinsèquement supporté par NodeJS : le multithreading.
-Multi threaded access requested by thread Thread[streaming-job-executor-0,5,main] but is not allowed for language(s) js.
+```Multi threaded access requested by thread Thread[streaming-job-executor-0,5,main] but is not allowed for language(s) js.```
+
 En effet, la fonction foreachRDD de Spark utilise du multithreading afin de dispatcher le traitement des RDD, ce qui n’est malheureusement pas possible en Javascript qui est mono-thread.
-Il existe un moyen de faire du multithreading en utilisant les workers qui existe dans les dernières versions de NodeJS mais cela ne compense pas le problème.
+Il existe un moyen de faire du multithreading, en utilisant les workers, qui est présent dans les dernières versions de NodeJS mais cela ne compense pas le problème.
+
 Vous trouverez dans le repo le fichier sparkFullJs.js qui comporte le code en full JS de l’application.
 
 ## 🚀 Implémentation JS/Java
