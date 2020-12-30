@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <h1 align="center">
     Projet Environnement Big Data
 </h1>
@@ -46,3 +47,6 @@ Dans un premier temps, nous avons produit un code permettant de créer un « s
 3. Exécuter une opération de MapReduce pour déterminer le nombre de citations de chaque hashtag
 4. Tri des hashtags par nombre de citations
 5. Application d'un forEachRDD pour récupérer les 10 hashtags les plus cités
+=======
+# twitter-spark-js
+>>>>>>> master
