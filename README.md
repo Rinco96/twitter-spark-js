@@ -29,7 +29,7 @@ Pour ce faire, nous créerons une application permettant de traiter et afficher 
 
 ## 🖥️ GraalVM
 
-GraalVM est la solution à notre principal problème. C'est une extension de la machine virtuelle JAVA (JVM) qui permet de supporter plus de langages et de mode d'exécution. Cette machine virtuelle polyglote permet d'exécuter du code de différents langages dans un même environnement. Les langages pris en charge sont les suivants :
+Pour pallier le manque d'implémentation Javascript du framework Spark, nous allons utiliser le projet GraalVM. C'est une extension de la machine virtuelle JAVA (JVM) qui permet de supporter plus de langages et de mode d'exécution. Cette machine virtuelle polyglote permet d'exécuter du code de différents langages dans un même environnement. Les langages pris en charge sont les suivants :
 * NodeJS
 * Java
 * Python
@@ -38,7 +38,7 @@ GraalVM est la solution à notre principal problème. C'est une extension de la 
 * C/C++
 * Et d'autres
 
-Tous ces langages peuvent intéragir entre eux. Il est par exemple possible de créer une application express (en JS) utilsant du code JAVA et c'est justement ce qu'on nous avons réalisé.
+Tous ces langages peuvent intéragir entre eux. Il est par exemple possible de créer une application express (en JS) utilsant du code JAVA et c'est justement ce qu'on nous avons réalisé. En effet, notre but sera d’importer des packages java contenant les fonctions de Spark pour ensuite les utiliser en langage Javascript.
 
 ## Implémentation Full JS
 
@@ -56,6 +56,7 @@ En effet, la fonction foreachRDD de Spark utilise du multithreading afin de disp
 Il existe un moyen de faire du multithreading, en utilisant les workers, qui est présent dans les dernières versions de NodeJS mais cela ne compense pas le problème.
 
 Vous trouverez dans le repo le fichier sparkFullJs.js qui comporte le code en full JS de l’application.
+C'est pourquoi nous avons opté pour une implémentation mélant Javascript et Java afin de pallier le problème de multithreading.
 
 ## Implémentation JS/Java
 
@@ -65,7 +66,7 @@ La machine virtuelle GraalVM nous permet d’utiliser du code java dans une appl
 
 Dans un premier temps, nous avons produit un code permettant de créer un « stream » depuis l’API Twitter en utilisant la librairie Twitter4J (http://twitter4j.org/en/) ainsi que les packages de la librairie Spark Java (https://spark.apache.org/docs/latest/api/java/index.html).
 
-### Présentation du code JAVA
+#### Présentation du code JAVA
 
 La première étape est s'authentifier auprès de l'API Twitter par le biais de la librairie Twitter4J. Une fois cela réalisé, nous pouvons accéder au stream de tweets et les traiter. Les étapes a réaliser pour obtenir le top 10 des hashtags les plus citées sont les suivantes :
 
@@ -74,6 +75,15 @@ La première étape est s'authentifier auprès de l'API Twitter par le biais de 
 3. Exécuter une opération de MapReduce pour déterminer le nombre de citations de chaque hashtag
 4. Tri des hashtags par nombre de citations
 5. Application d'un forEachRDD pour récupérer les 10 hashtags les plus cités
+
+#### Présentation du code Javascript
+
+Dans ce projet, deux fichiers javascript sont présents, l'un permet de lancer l'application sur un serveur node et l'autre réalise l'appel au code Java permettant de récupérer les données récoltées sur le stream. Pour cela, GraalVM permet l'importation de package Java dans du Javascript. Voici le code permettant une telle chose :
+```javascript
+var TwitterSparkStreaming = Java.type("com.ece.demo.spark.streaming.twitter.TwitterSparkStreaming");
+var tss = new TwitterSparkStreaming();
+```
+Par la suite, un worker javascript est lancé. Il permet l'exécution, en parallèle, de la méthode Java qui récupére et traite les données de Twitter. Ces données sont ensuite envoyées au serveur node et accessibles sur l'URL `http://localhost:8000/`.
 
 ## 🚀 Lancer l'application sans docker
 
