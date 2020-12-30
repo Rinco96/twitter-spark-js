@@ -8,7 +8,7 @@
 
 *******************
 
-## 📖 Itroduction
+## 📖 Introduction
 
 Apache Spark est un moteur de traitement de données rapide et dédié qui permet d’effectuer un traitement de larges volumes de données de manière distribuée. Très en vogue depuis maintenant quelques années, il est de plus en plus accessible grâce au support multi-langage qu’il propose. En effet, le framework supporte différents langages de programmation tels que Java, Scala, Python et R. 
 
@@ -77,11 +77,9 @@ La première étape est s'authentifier auprès de l'API Twitter par le biais de 
 
 ## 🚀 Lancer l'application sans docker
 
-Premièrement, il faut installer GraalVM et Spark grâce aux liens suivants : 
-* GraalVM : https://www.graalvm.org/downloads/
-* Spark : https://spark.apache.org/downloads.html
+Premièrement, il faut installer GraalVM : https://www.graalvm.org/downloads/
 
-⚠️ Attention ! ⚠️ Prenez de préférence la version incluant Java 11 pour s’assurer de la compatibilité avec Spark 3. Si vous préférez utiliser Spark 2 alors il faudra la version de GraalVM qui inclut Java 8. 
+⚠️ Attention ! ⚠️ Prenez de préférence la version incluant Java 11 pour s’assurer de la compatibilité avec Spark 3. En effet, les jars présents dans ce repo incluent la version 3 de Spark. 
 
 Il s’agit maintenant de préparer notre environnement GraalVM en exécutant la commande suivante : 
 
