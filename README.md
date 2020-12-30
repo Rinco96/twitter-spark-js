@@ -63,5 +63,8 @@ Nous utiliserons donc la commande artisanale suivante pour ajouter tous les JARS
 
 ```CLASSPATH=$(find "jars/" -name '*.jar' | xargs echo | tr ' ' ':')```
 
+Ensuite vous pouvez lancer l'application en utilisant la commande suivante :
+```node --jvm --vm.cp $CLASSPATH js/serverTwitterSpark.js```
+
 ## Lancer l'application avec docker
 ```sudo docker run -p 7000:7000 -p 8000:8000 rinco/twitter-spark-js:latest```
