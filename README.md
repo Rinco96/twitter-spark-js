@@ -8,16 +8,9 @@
 
 *******************
 
-## 📋 Liste des tâches réalisées
+## 📖 Itroduction
 
-* Réalisation d'une application full Javascript permettant d'afficher le Top 10 des Hashtags provenant d'un stream de tweets en utilsant Twitter API et Apache Spark Streaming
-* Réalisation de la même application en combinant Javascript et Java pour pallier aux problèmes de multithreading (voir partie Difficultés)
-* Déploiement de l'application sans docker
-* Déploiement de l'application avec docker
-
-## Introduction
-
-Apache Spark est un moteur de traitement de données rapide dédié qui permet d’effectuer un traitement de larges volumes de données de manière distribuée. Très en vogue depuis maintenant quelques années, il est de plus en plus accessible grâce au support multi-langage qu’il propose. En effet, le framework supporte différents langages de programmation tels que Java, Scala, Python et R. 
+Apache Spark est un moteur de traitement de données rapide et dédié qui permet d’effectuer un traitement de larges volumes de données de manière distribuée. Très en vogue depuis maintenant quelques années, il est de plus en plus accessible grâce au support multi-langage qu’il propose. En effet, le framework supporte différents langages de programmation tels que Java, Scala, Python et R. 
 
 Cependant, parmi ces langages on remarque l’absence d’un langage tout aussi populaire et qui n’est pourtant pas supporté : le Javascript. 
 
@@ -27,7 +20,14 @@ Nous vous montrerons aujourd’hui une solution afin d’utiliser Spark dans un 
 
 Pour ce faire, nous créerons une application permettant de traiter et afficher en temps réel les hashtags les plus utilisés en utilisant l’API twitter et l’extension Apache Spark Streaming. 
 
-## GraalVM
+## 📋 Liste des tâches réalisées
+
+* Réalisation d'une application full Javascript permettant d'afficher le Top 10 des Hashtags provenant d'un stream de tweets en utilisant Twitter API et Apache Spark Streaming
+* Réalisation de la même application en combinant Javascript et Java pour pallier aux problèmes de multithreading (voir partie Difficultés)
+* Déploiement de l'application sans docker
+* Déploiement de l'application avec docker
+
+## 🖥️ GraalVM
 
 GraalVM est la solution à notre principal problème. C'est une extension de la machine virtuelle JAVA (JVM) qui permet de supporter plus de langages et de mode d'exécution. Cette machine virtuelle polyglote permet d'exécuter du code de différents langages dans un même environnement. Les langages pris en charge sont les suivants :
 * NodeJS
@@ -57,7 +57,7 @@ Il existe un moyen de faire du multithreading, en utilisant les workers, qui est
 
 Vous trouverez dans le repo le fichier sparkFullJs.js qui comporte le code en full JS de l’application.
 
-## 🚀 Implémentation JS/Java
+## Implémentation JS/Java
 
 Nous avons donc décider d’implémenter cette application en utilisant du Javascript et Java. Le Javascript nous permet de réaliser la partie « frontend » et l’appel au code Java qui lui est chargé de récupérer et de traiter les tweets à partir de l’API Twitter. 
 
@@ -67,13 +67,21 @@ Dans un premier temps, nous avons produit un code permettant de créer un « s
 
 ### Présentation du code JAVA
 
+La première étape est s'authentifier auprès de l'API Twitter par le biais de la librairie Twitter4J. Une fois cela réalisé, nous 
+
 1. Filtre pour récupérer uniquement les tweets en anglais
 2. Récupérer les hashtags
 3. Exécuter une opération de MapReduce pour déterminer le nombre de citations de chaque hashtag
 4. Tri des hashtags par nombre de citations
 5. Application d'un forEachRDD pour récupérer les 10 hashtags les plus cités
 
-## Lancer l'application sans docker
+## 🚀 Lancer l'application sans docker
+
+Premièrement, il faut installer GraalVM et Spark grâce aux liens suivants : 
+* GraalVM : https://www.graalvm.org/downloads/
+* Spark : https://spark.apache.org/downloads.html
+
+⚠️ Attention ! ⚠️ Prenez de préférence la version incluant Java 11 pour s’assurer de la compatibilité avec Spark 3. Si vous préférez utiliser Spark 2 alors il faudra la version de GraalVM qui inclut Java 8. 
 
 Il s’agit maintenant de préparer notre environnement GraalVM en exécutant la commande suivante : 
 
@@ -93,9 +101,10 @@ Ensuite vous pouvez lancer l'application en utilisant la commande suivante :
 
 ```node --jvm --vm.cp $CLASSPATH js/serverTwitterSpark.js```
 
-Une fois l'application lancée, le 10 hashtags les plus cités sont disponibles sur `http://localhost:8000/`.
+Une fois l'application lancée, le top 10 hashtags les plus cités sont disponibles sur `http://localhost:8000/`.
 
-## Lancer l'application avec docker
+## 🐳 Lancer l'application avec docker
+
 Il est possible de lancer l'application par le biais d'une image docker. Cette dernière est construite autour de l'image docker de GraalVM (https://hub.docker.com/r/oracle/graalvm-ce). Nous avons produit un dockerfile qui permet d'installer les modules node express et cors. De plus, il permet d'exposer les ports nécessaires et de lancer le script shell suivant : 
 ```
 #!/bin/bash
@@ -107,8 +116,9 @@ node --jvm --vm.cp $CLASSPATH ./js/serverTwitterSpark.js
 On y retrouve les commandes enoncées ci-dessus.
 
 Voici la commande pour télécharger et lancer l'image docker :
+
 ```sudo docker run -p 7000:7000 -p 8000:8000 rinco/twitter-spark-js:latest```
 
 Elle est disponible ici : https://hub.docker.com/r/rinco/twitter-spark-js
 
-Une fois l'application lancée, le 10 hashtags les plus cités sont disponibles sur `http://localhost:8000/`.
+Une fois l'application lancée, le top 10 hashtags les plus cités sont disponibles sur `http://localhost:8000/`.
