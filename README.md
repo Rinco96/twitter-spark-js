@@ -47,6 +47,21 @@ Dans un premier temps, nous avons produit un code permettant de créer un « s
 4. Tri des hashtags par nombre de citations
 5. Application d'un forEachRDD pour récupérer les 10 hashtags les plus cités
 
+## Lancer l'application sans docker
 
-## Run docker image
-sudo docker run -p 7000:7000 -p 8000:8000 rinco/twitter-spark-js:latest
+Il s’agit maintenant de préparer notre environnement GraalVM en exécutant la commande suivante : 
+
+```export PATH=graalvm-ce-java11-20.3.0/bin:$PATH```
+
+Si la commande a bien fonctionné vous devriez normalement utiliser l’environnement GraalVM en exécutant node. Vous pouvez le vérifier en tapant : 
+
+```which node``` 
+
+L’étape suivante va permettre d’utiliser les JARS de Spark dans notre environnement NodeJS. Malheureusement il n’est pas possible d’ajouter tout le dossier /jars dans GraalVM. 
+
+Nous utiliserons donc la commande artisanale suivante pour ajouter tous les JARS dans une variable d’environnement : 
+
+```CLASSPATH=$(find "jars/" -name '*.jar' | xargs echo | tr ' ' ':')```
+
+## Lancer l'application avec docker
+```sudo docker run -p 7000:7000 -p 8000:8000 rinco/twitter-spark-js:latest```
