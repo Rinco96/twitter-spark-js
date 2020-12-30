@@ -33,5 +33,16 @@ Pour ce faire, nous créerons une application permettant de traiter et afficher 
 
 ## 🚀 Implémentation JS/Java
 
+Nous avons donc décider d’implémenter cette application en utilisant du Javascript et Java. Le Javascript nous permet de réaliser la partie « frontend » et l’appel au code Java qui lui est chargé de récupérer et de traiter les tweets à partir de l’API Twitter. 
+
+La machine virtuelle GraalVM nous permet d’utiliser du code java dans une application Javascript et c’est ce que nous avons réalisé. 
+
+Dans un premier temps, nous avons produit un code permettant de créer un « stream » depuis l’API Twitter en utilisant la librairie Twitter4J (http://twitter4j.org/en/) ainsi que les packages de la librairie Spark Java (https://spark.apache.org/docs/latest/api/java/index.html).
+
+### Présentation du code JAVA
+
 1. Filtre pour récupérer uniquement les tweets en anglais
 2. Récupérer les hashtags
+3. Exécuter une opération de MapReduce pour déterminer le nombre de citations de chaque hashtag
+4. Tri des hashtags par nombre de citations
+5. Application d'un forEachRDD pour récupérer les 10 hashtags les plus cités
