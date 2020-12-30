@@ -46,3 +46,7 @@ Dans un premier temps, nous avons produit un code permettant de créer un « s
 3. Exécuter une opération de MapReduce pour déterminer le nombre de citations de chaque hashtag
 4. Tri des hashtags par nombre de citations
 5. Application d'un forEachRDD pour récupérer les 10 hashtags les plus cités
+
+
+## Run docker image
+sudo docker run -p 7000:7000 -p 8000:8000 rinco/twitter-spark-js:latest
