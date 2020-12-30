@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <title>Twitter Popular Hashtags</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" />
+  <style>
+    body,
+    h1 {
+      font-family: 'Raleway', sans-serif;
+    }
+    body,
+    html {
+      height: 100%;
+    }
+    .bgimg {
+      background-image: url('https://virtualwindow.com/wp-content/uploads/2013/08/Twitter-Background.jpg');
+      min-height: 100%;
+      background-position: center;
+      background-size: cover;
+    }
+  </style>
+  <body onload="initialCall()">
+    <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+      <div id="top-tweets" class="w3-display-middle">
+        <h1 class="w3-jumbo w3-animate-top">TOP 10 Twitter Hashtags</h1>
+        <hr class="w3-border-white" style="margin: auto; width: 40%" />
+      </div>
+      <div class="w3-display-bottomleft w3-padding-large"></div>
+    </div>
+    <script>
+      function initialCall() {
+        fetch('http://localhost:7000/getPopularHashtags')
+          .then((response) => response.json())
+          .then((res) => {
+            console.log(res);
+            if(res.length==0){
+              let text = document.createElement('p');
+              text.classList.add('w3-large');
+              text.classList.add('w3-center');
+              text.innerHTML = "Les données sont en cours de traitement. Veuillez patientez...";
+              document.getElementById('top-tweets').appendChild(text);
+            }
+            for(let i=0; i<res.length;i++){
+              let text = document.createElement('p');
+              text.classList.add('w3-large');
+              text.classList.add('w3-center');
+              text.innerHTML = i+1 + ". "+res[i];
+              document.getElementById('top-tweets').appendChild(text);
+            }
+
+          });
+      }
+    </script>
+  </body>
+</html>
