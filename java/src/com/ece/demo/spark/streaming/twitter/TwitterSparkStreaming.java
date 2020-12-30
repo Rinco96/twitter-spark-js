@@ -1,4 +1,5 @@
 package com.ece.demo.spark.streaming.twitter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +23,8 @@ import scala.Tuple2;
 import twitter4j.Status;
 
 /**
+ * Cette classe permet de récupérer les 10 hashtags les plus utilisés à partir d'un stream de tweets.
+ * 
  * @author robin
  *
  */
@@ -32,7 +35,7 @@ public class TwitterSparkStreaming {
 	private Map<String,Integer> popularTopicsMap = new HashMap<>();
 	
 	/**
-	 * Cette méthode permet de récupérer les hashtags les plus utilisés sur twitter à par d'un stream.
+	 * Cette méthode permet de récupérer les hashtags les plus utilisés sur twitter à partir d'un stream.
 	 * Celui-ci est établi grâce à la librarie Twitter4J.
 	 * 
 	 * @throws InterruptedException
@@ -45,23 +48,36 @@ public class TwitterSparkStreaming {
 		System.setProperty("twitter4j.oauth.accessToken", "2590054080-XXNYwO8tVXAXu3Ze7WFoCXANAvNdT8CXEQGQ7gZ");
 		System.setProperty("twitter4j.oauth.accessTokenSecret", "Bk3XWzdsjp8xphMEn9wws7rdI5HU1eJlLj846VLWWt6dJ");
 
-		//
+		// création d'une configuration pour notre application Spark
+		// setMaster("local[*]") permet de lancer le Spark localement en utilsant tous les coeurs disponibles
 		SparkConf sparkConf = new SparkConf().setAppName("JavaTwitterFeed").setMaster("local[*]");
-		JavaStreamingContext ssc = new JavaStreamingContext(sparkConf, new Duration(30000));
-
-		JavaReceiverInputDStream<Status> javaReceiverInputDStream = TwitterUtils.createStream(ssc);
-		JavaDStream<Status> frenchTweets = javaReceiverInputDStream.filter((status) -> "en".equalsIgnoreCase(status.getLang()));
-		JavaDStream<String> frenchTweetsString = frenchTweets.map((status)-> status.getText().replaceAll("[^\\x00-\\x7F]", "").replace("\n", " "));
-		frenchTweetsString.print();
-		JavaDStream<String> words = frenchTweetsString.flatMap(x -> Arrays.asList(SPACE.split(x)).iterator());
-		JavaDStream<String> hashTags = words.filter(x -> x.startsWith("#") && x.length()>3);
-		JavaPairDStream<String, Integer> hashTagsOnes = hashTags.mapToPair(x -> new Tuple2<>(x, 1));
-		JavaPairDStream<String, Integer> topCount60 = hashTagsOnes.reduceByKeyAndWindow((a,b) -> a+b, Durations.minutes(5));
-		JavaPairDStream<String, Integer> topCount60Sorted = topCount60.mapToPair((s) -> s.swap())
-				.transformToPair((rdd) -> rdd.sortByKey(false))
-				.mapToPair((s) -> s.swap());
 		
-		topCount60Sorted.foreachRDD((rdd) -> {
+		// création d'un point d'entré vers les fonctionnalités de streaming de Spark
+		JavaStreamingContext jsc = new JavaStreamingContext(sparkConf, new Duration(30000));
+
+		// création d'un stream grâce à la classe TwitterUtils
+		JavaReceiverInputDStream<Status> javaReceiverInputDStream = TwitterUtils.createStream(jsc);
+		
+		// application de différentes transformations sur le stream
+		// récupérer des tweets anglais uniquement et transformation en string
+		JavaDStream<Status> englishTweets = javaReceiverInputDStream.filter((status) -> "en".equalsIgnoreCase(status.getLang()));
+		JavaDStream<String> englishTweetsString = englishTweets.map((status)-> status.getText().replaceAll("[^\\x00-\\x7F]", "").replace("\n", " "));
+
+		// split pour récupérer les mots
+		JavaDStream<String> words = englishTweetsString.flatMap(x -> Arrays.asList(SPACE.split(x)).iterator());
+		//filtre pour récupérer les hashtags uniquement
+		JavaDStream<String> hashTags = words.filter(w -> w.startsWith("#") && w.length()>3);
+		
+		// application du MapReduce pour compter le nombre d'occurrences de chaque hashtag
+		JavaPairDStream<String, Integer> hashTagsMap = hashTags.mapToPair(x -> new Tuple2<>(x, 1));
+		JavaPairDStream<String, Integer> hashTagsReduce = hashTagsMap.reduceByKeyAndWindow((a,b) -> a+b, Durations.minutes(5));
+		// tri décroissant sur le nombre d'occurrences
+		JavaPairDStream<String, Integer> hashTagsSorted = hashTagsReduce.mapToPair((h) -> h.swap())
+				.transformToPair((rdd) -> rdd.sortByKey(false))
+				.mapToPair((h) -> h.swap());
+		
+		// récupération des 10 hashtags les plus cités
+		hashTagsSorted.foreachRDD((rdd) -> {
 			List<Tuple2<String,Integer>> topList = rdd.take(10);
 			System.out.println("----------------------------------------------------");
 		    System.out.println(String.format("Popular topics out of %s total topics received:\n", rdd.count()));
@@ -70,6 +86,7 @@ public class TwitterSparkStreaming {
 		    popularTopicsMap.clear();
 		    for(Tuple2<String,Integer> elem : topList){
 		    	popularTopics += elem._1() + ",";
+		    	// stockage de ces hashtags dans une map qui sera ensuite récupérées dans le code JS
 		    	popularTopicsMap.put(elem._1(), elem._2());
 		    	System.out.format("%d - %s : %d", i, elem._1(), elem._2());
 		    	i++;
@@ -77,16 +94,16 @@ public class TwitterSparkStreaming {
 		    }
 		});
 				
-		ssc.start();
+		jsc.start();
 		try {
-			ssc.awaitTermination();
+			jsc.awaitTermination();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * @return
+	 * @return la Map contenant les 10 hashtags les plus utilisés
 	 */
 	public Map<String,Integer> getPopularTopicsMap() {
         List<Entry<String, Integer>> list = new ArrayList<>(popularTopicsMap.entrySet());
