@@ -67,5 +67,22 @@ Ensuite vous pouvez lancer l'application en utilisant la commande suivante :
 
 ```node --jvm --vm.cp $CLASSPATH js/serverTwitterSpark.js```
 
+Une fois l'application lancée, le 10 hashtags les plus cités sont disponibles sur `http://localhost:8000/`.
+
 ## Lancer l'application avec docker
+Il est possible de lancer l'application par le biais d'une image docker. Cette dernière est construite autour de l'image docker de GraalVM (https://hub.docker.com/r/oracle/graalvm-ce). Nous avons produit un dockerfile qui permet d'installer les modules node express et cors. De plus, il permet d'exposer les ports nécessaires et de lancer le script shell suivant : 
+```
+#!/bin/bash
+
+CLASSPATH=$(find "./jars/" -name '*.jar' | xargs echo | tr ' ' ':')
+
+node --jvm --vm.cp $CLASSPATH ./js/serverTwitterSpark.js
+```
+On y retrouve les commandes enoncées ci-dessus.
+
+Voici la commande pour télécharger et lancer l'image docker :
 ```sudo docker run -p 7000:7000 -p 8000:8000 rinco/twitter-spark-js:latest```
+
+Elle est disponible ici : https://hub.docker.com/r/rinco/twitter-spark-js
+
+Une fois l'application lancée, le 10 hashtags les plus cités sont disponibles sur `http://localhost:8000/`.
