@@ -29,6 +29,17 @@ Pour ce faire, nous créerons une application permettant de traiter et afficher 
 
 ## GraalVM
 
+GraalVM est la solution à notre principal problème. C'est une extension de la machine virtuelle JAVA (JVM) qui permet de supporter plus de langages et de mode d'exécution. Cette machine virtuelle polyglote permet d'exécuter du code de différents langages dans un même environnement. Les langages pris en charge sont les suivants :
+* NodeJS
+* Java
+* Python
+* R
+* Ruby
+* C/C++
+* Et d'autres
+
+Tous ces langages peuvent intéragir entre eux. Il est par exemple possible de créer une application express (en JS) utilsant du code JAVA et c'est justement ce qu'on nous avons réalisé.
+
 ## Implémentation Full JS
 
 Notre objectif principal était de construire l'application en utilisant uniquement NodeJS.
