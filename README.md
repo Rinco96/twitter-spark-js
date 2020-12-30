@@ -10,8 +10,8 @@
 
 ## 📋 Liste des tâches réalisées
 
-* Réalisation full JS
-* Réalisation JS/Java
+* Réalisation d'une application full Javascript permettant d'afficher le Top 10 des Hashtags provenant d'un stream de tweets en utilsant Twitter API et Apache Spark Streaming
+* Réalisation de la même application en combinant Javascript et Java pour pallier aux problèmes de multithreading (voir partie Difficultés)
 * Sans docker
 * Avec docker
 
