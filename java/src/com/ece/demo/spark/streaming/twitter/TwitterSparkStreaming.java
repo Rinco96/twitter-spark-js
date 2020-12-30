@@ -78,13 +78,13 @@ public class TwitterSparkStreaming {
 		
 		// récupération des 10 hashtags les plus cités
 		hashTagsSorted.foreachRDD((rdd) -> {
-			List<Tuple2<String,Integer>> topList = rdd.take(10);
+			List<Tuple2<String,Integer>> top10hashtags = rdd.take(10);
 			System.out.println("----------------------------------------------------");
-		    System.out.println(String.format("Popular topics out of %s total topics received:\n", rdd.count()));
+		    System.out.println(String.format("Top 10 hashtags out of %s total hashtags:\n", rdd.count()));
 		    int i = 1;
 		    popularTopics = "";
 		    popularTopicsMap.clear();
-		    for(Tuple2<String,Integer> elem : topList){
+		    for(Tuple2<String,Integer> elem : top10hashtags){
 		    	popularTopics += elem._1() + ",";
 		    	// stockage de ces hashtags dans une map qui sera ensuite récupérées dans le code JS
 		    	popularTopicsMap.put(elem._1(), elem._2());
